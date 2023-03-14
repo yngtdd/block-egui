@@ -1,6 +1,6 @@
 # BLOCK
 
-Programmable reliability block diagrams.
+Reliability block programming.
 
 ## Introduction
 
