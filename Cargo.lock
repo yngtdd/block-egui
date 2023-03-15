@@ -348,6 +348,7 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 name = "block"
 version = "0.1.0"
 dependencies = [
+ "catppuccin-egui",
  "eframe",
  "egui_node_graph",
  "tracing-subscriber",
@@ -450,6 +451,15 @@ dependencies = [
  "slotmap",
  "thiserror",
  "vec_map",
+]
+
+[[package]]
+name = "catppuccin-egui"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e508ad60790f1336e5ab24da9b809826e7ea9171281cc70e894f514f37791317"
+dependencies = [
+ "egui 0.21.0",
 ]
 
 [[package]]
