@@ -26,13 +26,18 @@ pub struct NodeData {
 #[cfg_attr(feature = "persistence", derive(Deserialize, Serialize))]
 pub struct NodeParameters {
     /// Weibull shape
-    shape: f64,
+    pub shape: f64,
     /// Weibull scale
-    scale: f64,
+    pub scale: f64,
     /// Number of time steps to draw the CDF over
-    time_steps: u32,
+    pub time_steps: u32,
 }
 
+/// Default parameters of our nodes
+///
+/// When a node is created, we start with default 
+/// parameters. This will give us something to immediately
+/// render and use.
 impl Default for NodeParameters {
     fn default() -> Self {
         Self {
@@ -43,8 +48,49 @@ impl Default for NodeParameters {
     }
 }
 
+#[derive(PartialEq, Eq)]
+#[cfg_attr(feature = "persistence", derive(Deserialize, Serialize))]
+pub enum NodeType {
+    Component,
+}
 
+#[derive(Clone, Debug)]
+#[cfg_attr(feature = "persistence", derive(Deserialize, Serialize))]
+pub enum ValueType {
+    Component { value: Vec<f64> }
+}
 
+/// The Graph's global state
+///
+/// This is passed between nodes, allowing us to 
+/// highlight which node is active. this is useful
+/// when rendering our Weibull CDFs over time for 
+/// each of the nodes.
+#[derive(Default)]
+#[cfg_attr(feature = "persistence", derive(Deserialize, Serialize))]
+pub struct GraphState {
+    pub active_node: Option<NodeId>
+}
+
+/// Node Template
+///
+/// Represents the possible types of nodes we can create
+#[derive(Clone, Copy)]
+#[cfg_attr(feature = "persistence", derive(Deserialize, Serialize))]
+pub enum NodeTemplate {
+    CreateComponent,
+}
+
+impl NodeTemplateTrait for NodeTemplate {
+    type NodeData = NodeData;
+    type DataType = NodeType;
+    type ValueType = ValueType;
+    type UserState = GraphState;
+
+    /// Todo(): implement missing functions
+}
+
+/// Our application
 pub struct MyApp {}
 
 impl Default for MyApp {
