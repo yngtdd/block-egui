@@ -7,4 +7,6 @@ edition = "2021"
 catppuccin-egui = "2.0.0"
 eframe = { version = "0.21.3", features = ["persistence"] }
 egui_node_graph = { version = "0.4.0", features = ["serde", "persistence"] }
+serde = { version = "1.0.156", features = ["derive"] }
+statrs = "0.16.0"
 tracing-subscriber = "0.3.16"
