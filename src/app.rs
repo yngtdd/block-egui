@@ -1,20 +1,14 @@
-use eframe::egui;
+use eframe::{App, egui};
 
-pub struct MyApp {
-    pub name: String,
-    pub age: u32,
-}
+pub struct MyApp {}
 
 impl Default for MyApp {
     fn default() -> Self {
-        Self {
-            name: "Todd".to_owned(),
-            age: 42,
-        }
+        Self {}
     }
 }
 
-impl eframe::App for MyApp {
+impl App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         catppuccin_egui::set_theme(ctx, catppuccin_egui::MACCHIATO);
 
