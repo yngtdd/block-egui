@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use eframe::{egui, App};
 use egui_node_graph::*;
 use serde::{Deserialize, Serialize};
@@ -7,7 +8,7 @@ use serde::{Deserialize, Serialize};
 /// Useful to store additional data that does not live in parameters
 #[cfg_attr(feature = "persistence", derive(Deserialize, Serialize))]
 pub struct NodeData {
-    weibull_cdf: Vec<f64>,
+    template: NodeTemplate,
 }
 
 /// Node input parameters
@@ -54,11 +55,11 @@ pub enum NodeType {
     Component,
 }
 
-#[derive(Clone, Debug)]
-#[cfg_attr(feature = "persistence", derive(Deserialize, Serialize))]
-pub enum ValueType {
-    Component { value: Vec<f64> }
-}
+// #[derive(Clone, Debug)]
+// #[cfg_attr(feature = "persistence", derive(Deserialize, Serialize))]
+// pub enum ValueType {
+//     Component { value: Vec<f64> }
+// }
 
 /// The Graph's global state
 ///
@@ -81,13 +82,62 @@ pub enum NodeTemplate {
     CreateComponent,
 }
 
+type MyGraph = Graph<NodeData, NodeType, NodeParameters>;
+
 impl NodeTemplateTrait for NodeTemplate {
     type NodeData = NodeData;
     type DataType = NodeType;
-    type ValueType = ValueType;
+    type ValueType = NodeParameters;
     type UserState = GraphState;
 
-    /// Todo(): implement missing functions
+    /// Label in our menu selection
+    fn node_finder_label(&self, user_state: &mut Self::UserState) -> Cow<str> {
+        Cow::Borrowed(match self {
+            NodeTemplate::CreateComponent => "Create Component"
+        })
+    }
+
+    fn node_graph_label(&self, user_state: &mut Self::UserState) -> String {
+        self.node_graph_label(user_state).into()
+    }
+
+    fn user_data(&self, _user_state: &mut Self::UserState) -> Self::NodeData {
+        // TODO(Todd): figure out how to combine NodeParameters and NodeData here to 
+        // produce a Weibull CDF
+        NodeData { template: *self }
+    }
+
+    fn build_node(
+            &self,
+            graph: &mut Graph<Self::NodeData, Self::DataType, Self::ValueType>,
+            _user_state: &mut Self::UserState,
+            node_id: NodeId,
+        ) {
+
+        let node_input = |graph: &mut MyGraph, name: &str| {
+            graph.add_input_param(
+                node_id,
+                name.to_string(),
+                NodeType::Component,
+                NodeParameters { shape: 0.5, scale: 200.0, time_steps: 730 },
+                InputParamKind::ConnectionOnly,
+                true
+            )
+        };
+
+        let node_output = |graph: &mut MyGraph, name: &str| {
+            graph.add_output_param(node_id, name.to_string(), NodeType::Component)
+        };
+
+        match self {
+           NodeTemplate::CreateComponent => {
+                node_input(graph, "A");
+                node_input(graph, "B");
+                node_output(graph, "out");
+            } 
+        }
+        
+    }
 }
 
 /// Our application
